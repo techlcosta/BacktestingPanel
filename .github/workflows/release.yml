@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Resolve version
         shell: pwsh
@@ -25,22 +25,22 @@ jobs:
           "APP_EXE=BackTestPanel_V$version.exe" >> $env:GITHUB_ENV
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12.10"
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
         with:
-          node-version: "22"
+          version: 10.33.0
+          package_json_file: frontend/package.json
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
-
-      - name: Enable pnpm
-        shell: pwsh
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.33.0 --activate
 
       - name: Install Python dependencies
         shell: pwsh
