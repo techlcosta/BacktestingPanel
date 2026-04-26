@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, TypeAlias
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 ENV_PREFIX = "FX_BACKTEST_PANEL"
 ENV_MODE_KEY = f"{ENV_PREFIX}_MODE"
