@@ -1,0 +1,40 @@
+[project]
+name = "backtestpanel"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12.10"
+dependencies = [
+    "pyinstaller>=6.19.0",
+    "pywebview>=6.1",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.10",
+    "watchfiles>=1.1.1",
+    "psutil>=7.1.2",
+    "pyright>=1.1.408",
+]
+
+
+[tool.ruff]
+line-length = 200
+target-version = "py311"
+extend-exclude = [".venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle
+    "F",  # pyflakes
+    "I",  # import sorting
+    "UP", # pyupgrade
+    "B",  # bugbear
+]
+ignore = [
+    "E501", # deixa o formatter cuidar de linha longa
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

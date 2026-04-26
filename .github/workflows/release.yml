@@ -1,0 +1,75 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows executable
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          "APP_VERSION=$version" >> $env:GITHUB_ENV
+          "APP_EXE=BackTestPanel_V$version.exe" >> $env:GITHUB_ENV
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.10"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Enable pnpm
+        shell: pwsh
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.0 --activate
+
+      - name: Install Python dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install uv
+          uv sync --frozen
+
+      - name: Install frontend dependencies
+        shell: pwsh
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Build executable
+        shell: pwsh
+        run: uv run python -m src.scripts.build --version $env:APP_VERSION
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: |
+            dist/${{ env.APP_EXE }}
+            resources/BridgeTcpClient.ex5
+          if-no-files-found: error
+
+      - name: Create GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME "dist/$env:APP_EXE" "resources/BridgeTcpClient.ex5" --title "BackTestPanel $env:GITHUB_REF_NAME" --generate-notes --latest

@@ -1,0 +1,13 @@
+{
+  "plugins": ["./frontend/node_modules/prettier-plugin-tailwindcss/dist/index.mjs"],
+  "tailwindFunctions": ["cn", "cva"],
+  "singleQuote": true,
+  "semi": false,
+  "printWidth": 180,
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "useTabs": false,
+  "arrowParens": "avoid",
+  "bracketSpacing": true,
+  "endOfLine": "lf"
+}
